@@ -1,0 +1,10 @@
+.parent{
+  display: flex;
+  gap: 3rem;
+}
+.myinput{
+  background-color: rgb(184, 78, 51);
+  border: 2px solid;
+  line-height: 1.5rem;
+  color: white;
+}
