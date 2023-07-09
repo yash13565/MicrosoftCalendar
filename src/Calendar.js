@@ -1,15 +1,10 @@
 import { useEffect, useState,useMemo } from 'react';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import { Table } from 'react-bootstrap';
 import { findIana } from 'windows-iana';
 import { AuthenticatedTemplate } from '@azure/msal-react';
-import { add, format, getDay, parseISO } from 'date-fns';
-import { endOfWeek, startOfWeek } from 'date-fns/esm';
-
 import { getUserWeekCalendar } from './GraphService';
 import { useAppContext } from './AppContext';
 import Scheduler from 'devextreme-react/scheduler';
-
 import './Calendar.css';
 const views = ['month'];
 export default function Calendar() {
