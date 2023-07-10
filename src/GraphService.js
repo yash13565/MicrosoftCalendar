@@ -24,14 +24,14 @@ export async function getUser(authProvider) {
   return user;
 }
 
-export async function getUserWeekCalendar(authProvider, timeZone) {
+export async function getUserWeekCalendar(authProvider, timeZone,id) {
   ensureClient(authProvider);
 
   const now = new Date();
   const startDateTime = zonedTimeToUtc(startOfYear(now), timeZone).toISOString();
   const endDateTime = zonedTimeToUtc(endOfYear(now), timeZone).toISOString();
 
-  const response = await graphClient.api('/me/calendarview')
+  const response = await graphClient.api(`/me/calendars/${id}/calendarView`)
     .header('Prefer', `outlook.timezone="${timeZone}"`)
     .query({ startDateTime: startDateTime, endDateTime: endDateTime })
     .select('subject,organizer,start,end')

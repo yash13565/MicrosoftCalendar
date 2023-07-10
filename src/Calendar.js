@@ -9,7 +9,8 @@ import './Calendar.css';
 const views = ['month'];
 export default function Calendar() {
   const app = useAppContext();
-
+  const userId = JSON.parse(localStorage.getItem('usersCalendar'))
+  console.log(userId,'id')
   const [events, setEvents] = useState([]);
   const currentDate = new Date();
 
@@ -17,7 +18,7 @@ export default function Calendar() {
     if (app.user && events.length === 0) {
       try {
         const ianaTimeZones = findIana(app.user.timeZone);
-        const loadedEvents = await getUserWeekCalendar(app.authProvider, ianaTimeZones[0].valueOf());
+        const loadedEvents = await getUserWeekCalendar(app.authProvider, ianaTimeZones[0],userId.selected);
         setEvents(loadedEvents);
       } catch (err) {
         const error = err;

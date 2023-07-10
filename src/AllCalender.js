@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { getAllCalendar } from './GraphService';
 import { useAppContext } from './AppContext';
 import { NavLink as RouterNavLink, useNavigate } from 'react-router-dom';
-import './App.css'
-function AllCalendars() {
+import './App.css';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const AllCalendars = () => {
   const app = useAppContext();
   const [calData, setCalData] = useState([]);
-  const [selected, setSelected] = useState();
   const navigate = useNavigate();
 
   const loadCalendars = async () => {
@@ -14,9 +16,7 @@ function AllCalendars() {
       try {
         const loadedCalendars = await getAllCalendar(app.authProvider);
         setCalData(loadedCalendars);
-        if (loadedCalendars.length > 0 && !selected) {
-          setSelected(loadedCalendars[0].id);
-        }
+        
       } catch (err) {
         app.displayError(err.message);
       }
@@ -26,36 +26,51 @@ function AllCalendars() {
   useEffect(() => {
     loadCalendars();
   }, [app.user, app.authProvider]);
-
-  const handleRadioChange = (calendarId) => {
-    setSelected(calendarId);
+  
+  const handleNextClick = (values) => {
+    console.log(values.selected)
+    localStorage.setItem('usersCalendar',JSON.stringify(values))
+    navigate(`/calendar?selected=${formik.values.selected}`);
   };
 
-  const handleNextClick = () => {
-    navigate(`/calendar?selected=${selected}`);
-  };
+  const validationSchema = Yup.object({
+    selected: Yup.string().required('Please select a calendar'),
+  });
 
+  const formik = useFormik({
+    initialValues: {
+      selected: '',
+    },
+    validationSchema,
+    onSubmit: handleNextClick,
+  });
+
+ 
   return (
-    <div>
+    <form onSubmit={formik.handleSubmit}>
       {calData.value?.map((calendar) => (
         <div className="myinput" key={calendar.id}>
           <label>
             <input
               type="radio"
+              name="selected"
               value={calendar.id}
-              checked={selected === calendar.id}
-              onChange={() => handleRadioChange(calendar.id)}
+              checked={formik.values.selected === calendar.id}
+              onChange={formik.handleChange}
               className="myinput"
             />
             {calendar.name}
           </label>
         </div>
       ))}
-      <button className="btn btn-dark btn-sm" onClick={handleNextClick}>
+      {formik.errors.selected && (
+        <div className="error">{formik.errors.selected}</div>
+      )}
+      <button type="submit" className="btn btn-dark btn-sm">
         Next
       </button>
-    </div>
+    </form>
   );
-}
+};
 
 export default AllCalendars;
